@@ -1,15 +1,19 @@
 "use client";
-import Image from "next/image";
 import {Xumm} from 'xumm';
 import {useState} from "react";
+import {Client} from 'xrpl'
 
-const xumm = new Xumm('5a37cd08-9b58-423f-8c08-7727892dfbe8') // Some API Key UUID
+const xumm = new Xumm('05c0e39b-95d6-49bc-af43-90f78cfa3167') // Some API Key UUID
+
+const xrplClient = new Client('wss://s.altnet.rippletest.net:51233')
+
 
 export default function Home() {
   const [account, setAccount] = useState('')
   const [appName, setAppName] = useState('')
   xumm.user.account.then(a => setAccount(a ?? ''))
   xumm.environment.jwt?.then(j => setAppName(j?.app_name ?? ''))
+
   console.log(account)
   const logout = () => {
     xumm.logout()
@@ -25,9 +29,10 @@ export default function Home() {
       "TransferFee": 1,
       "NFTokenTaxon": 0,
     }, eventMessage => {
-      console.log(eventMessage)
+      console.log("test",eventMessage)
       if (Object.keys(eventMessage.data).indexOf('opened') > -1) {
         // Update the UI? The payload was opened.
+        console.log('Payload opened:', eventMessage.data.opened)
       }
       if (Object.keys(eventMessage.data).indexOf('signed') > -1) {
         // The `signed` property is present, true (signed) / false (rejected)
@@ -35,11 +40,26 @@ export default function Home() {
       }
     })
         .then(resolved => {
-            console.log('Payload resolved', resolved)
+            console.log('test2', resolved)
 
           return resolved // Return payload promise for the next `then`
         })
-        .then(payload => console.log('Payload resolved', payload))
+        .then(({ created, resolved }) => {
+          console.log('Payload URL:', created.next.always)
+          console.log('Payload QR:', created.refs.qr_png)
+
+          return resolved // Return payload promise for the next `then`
+        }).then(payload => {
+      console.log('Payload resolved', payload)
+      xrplClient.connect().then(() => {
+        // @ts-ignore
+        const test = xrplClient.request({"command":"tx","transaction":payload.data.txid}).then(res => {
+          // @ts-ignore
+          console.log(res.result.meta.nftoken_id)
+          xrplClient.disconnect()
+        })
+      } )
+    })
   }
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
