@@ -1,8 +1,10 @@
 "use client";
 import xrplClient from "@/auth/Xrp";
 import xumm from "@/auth/Xumm";
+import { pinFileToIPFS } from "@/helpers/sendFileToPinata";
 import { useState } from "react";
 import { Path, useForm, UseFormRegister, SubmitHandler } from "react-hook-form";
+import { convertStringToHex } from "xrpl";
 
 type IFormValues = {
   title: string;
@@ -28,20 +30,21 @@ const Input = ({ label, register, required }: InputProps) => (
 );
 
 export default function CreateOffer() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<IFormValues>();
+  const { register, handleSubmit } = useForm<IFormValues>();
   const [account, setAccount] = useState("");
   xumm.user.account.then((a) => setAccount(a ?? ""));
-  const onSubmit: SubmitHandler<IFormValues> = (data) => {
+
+  const onSubmit: SubmitHandler<IFormValues> = async (data) => {
+    const returned = await pinFileToIPFS(
+      data as unknown as Record<string, string>
+    );
     xumm.payload?.createAndSubscribe(
       {
         TransactionType: "NFTokenMint",
         Account: account,
-        URI: "697066733A2F2F62616679626569676479727A74357366703775646D37687537367568377932366E6634646675796C71616266336F636C67747179353566627A6469",
+        URI: convertStringToHex(
+          [process.env.NEXT_PUBLIC_PINATA_GATEWAY_BASE_URL, returned].join("")
+        ),
         Flags: 8,
         TransferFee: 1,
         NFTokenTaxon: 0,
@@ -63,8 +66,6 @@ export default function CreateOffer() {
             })
             .then((res) => {
               xrplClient.disconnect();
-              // @ts-ignore
-              console.log(res.result.meta.nftoken_id);
               xumm.payload?.createAndSubscribe(
                 {
                   TransactionType: "NFTokenCreateOffer",
@@ -75,7 +76,6 @@ export default function CreateOffer() {
                   Amount: "1",
                 },
                 async (eventMessage) => {
-                  console.log(eventMessage);
                   if (Object.keys(eventMessage.data).indexOf("opened") > -1) {
                     // Update the UI? The payload was opened.
                   }
