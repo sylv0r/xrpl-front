@@ -44,6 +44,8 @@ export default function CreateOffer() {
   useEffect(() => {
     if (!account) {
       replace("/");
+    } else {
+      replace("/offer/create");
     }
   }, [account, replace]);
 
