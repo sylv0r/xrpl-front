@@ -3,7 +3,13 @@ import xrplClient from "@/auth/Xrp";
 import xumm from "@/auth/Xumm";
 import { pinFileToIPFS } from "@/helpers/sendFileToPinata";
 import { useState } from "react";
-import { Path, useForm, UseFormRegister, SubmitHandler } from "react-hook-form";
+import {
+  Path,
+  useForm,
+  UseFormRegister,
+  SubmitHandler,
+  set,
+} from "react-hook-form";
 import { convertStringToHex } from "xrpl";
 
 type IFormValues = {
@@ -14,17 +20,20 @@ type IFormValues = {
 };
 
 type InputProps = {
-  label: Path<IFormValues>;
+  type?: string;
+  label: string;
+  name: Path<IFormValues>;
   register: UseFormRegister<IFormValues>;
   required: boolean;
 };
 
-const Input = ({ label, register, required }: InputProps) => (
+const Input = ({ label, register, required, type, name }: InputProps) => (
   <div className={"flex flex-col gap-2"}>
     <label>{label}</label>
     <input
       className={"border border-gray-300 rounded p-2"}
-      {...register(label, { required })}
+      type={type ?? "text"}
+      {...register(name, { required })}
     />
   </div>
 );
@@ -32,6 +41,8 @@ const Input = ({ label, register, required }: InputProps) => (
 export default function CreateOffer() {
   const { register, handleSubmit } = useForm<IFormValues>();
   const [account, setAccount] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [qrCode, setQrCode] = useState<string>("");
   xumm.user.account.then((a) => setAccount(a ?? ""));
 
   const onSubmit: SubmitHandler<IFormValues> = async (data) => {
@@ -59,7 +70,7 @@ export default function CreateOffer() {
         }
         xrplClient.connect().then(() => {
           if (!eventMessage.payload.response.txid) return;
-          const test = xrplClient
+          xrplClient
             .request({
               command: "tx",
               transaction: eventMessage.payload.response.txid,
@@ -73,7 +84,7 @@ export default function CreateOffer() {
                   // @ts-ignore
                   NFTokenID: res.result.meta.nftoken_id,
                   Flags: 1,
-                  Amount: "1",
+                  Amount: data.price,
                 },
                 async (eventMessage) => {
                   if (Object.keys(eventMessage.data).indexOf("opened") > -1) {
@@ -92,24 +103,49 @@ export default function CreateOffer() {
   };
 
   return (
-    <div className={"flex flex-1 items-center justify-center p-10"}>
-      <form
-        className={
-          "p-8 border shadow rounded-xl flex flex-1 flex-col max-w-screen-md gap-4"
-        }
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Input label={"title"} register={register} required />
-        <Input label={"description"} register={register} required />
-        <Input label={"image"} register={register} required />
-        <Input label={"price"} register={register} required />
-        <button
-          className={"bg-blue-500 text-white rounded p-2 mt-6"}
-          type="submit"
+    <>
+      {isOpen && (
+        <dialog
+          open={isOpen}
+          className="bg-gray-500 bg-opacity-50 w-screen h-screen bg-transparent flex items-center justify-center"
         >
-          Submit
-        </button>
-      </form>
-    </div>
+          <div className="bg-white w-fit p-10 rounded">
+            <h3>Confirm the offer creation</h3>
+            <p>Creating offer...</p>
+            <img src={qrCode} />
+          </div>
+        </dialog>
+      )}
+      <div className={"flex flex-1 items-center justify-center p-10"}>
+        <form
+          className={
+            "p-8 border shadow rounded-xl flex flex-1 flex-col max-w-screen-md gap-4"
+          }
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Input name="title" label={"Title"} register={register} required />
+          <Input
+            name="description"
+            label={"Description"}
+            register={register}
+            required
+          />
+          <Input name="image" label={"Image"} register={register} required />
+          <Input
+            name="price"
+            label={"Price (1000000 = 1 XRP)"}
+            register={register}
+            type="number"
+            required
+          />
+          <button
+            className={"bg-blue-500 text-white rounded p-2 mt-6"}
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

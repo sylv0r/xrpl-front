@@ -1,9 +1,7 @@
 "use client";
-import { Xumm } from "xumm";
 import { useState } from "react";
 import { Client } from "xrpl";
-
-const xumm = new Xumm("05c0e39b-95d6-49bc-af43-90f78cfa3167"); // Some API Key UUID
+import xumm from "@/auth/Xumm";
 
 const xrplClient = new Client("wss://s.altnet.rippletest.net:51233");
 
@@ -56,12 +54,10 @@ export default function Home() {
       .then((payload) => {
         console.log("Payload resolved", payload);
         xrplClient.connect().then(() => {
-          // @ts-ignore
-          const test = xrplClient
+          xrplClient
+            // @ts-ignore
             .request({ command: "tx", transaction: payload.data.txid })
-            .then((res) => {
-              // @ts-ignore
-              console.log(res.result.meta.nftoken_id);
+            .then(() => {
               xrplClient.disconnect();
             });
         });

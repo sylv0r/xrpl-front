@@ -3,9 +3,7 @@ import FormData from "form-data";
 
 export const pinFileToIPFS = async (data: Record<string, string>) => {
   const formData = new FormData();
-  const jsonData = JSON.stringify({
-    data,
-  });
+  const jsonData = JSON.stringify(data);
 
   // Create a Buffer from the JSON data
   const jsonBuffer = Buffer.from(jsonData, "utf-8");
