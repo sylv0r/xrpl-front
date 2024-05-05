@@ -3,14 +3,9 @@ import xrplClient from "@/auth/Xrp";
 import xumm from "@/auth/Xumm";
 import { pinFileToIPFS } from "@/helpers/sendFileToPinata";
 import { useState } from "react";
-import {
-  Path,
-  useForm,
-  UseFormRegister,
-  SubmitHandler,
-  set,
-} from "react-hook-form";
+import { Path, useForm, UseFormRegister, SubmitHandler } from "react-hook-form";
 import { convertStringToHex } from "xrpl";
+import { useRouter } from "next/navigation";
 
 type IFormValues = {
   title: string;
@@ -39,6 +34,7 @@ const Input = ({ label, register, required, type, name }: InputProps) => (
 );
 
 export default function CreateOffer() {
+  const { push } = useRouter();
   const { register, handleSubmit } = useForm<IFormValues>();
   const [account, setAccount] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -93,6 +89,10 @@ export default function CreateOffer() {
                   if (Object.keys(eventMessage.data).indexOf("signed") > -1) {
                     // The `signed` property is present, true (signed) / false (rejected)
                     return eventMessage;
+                  }
+                  if (eventMessage.payload.payload.origintype) {
+                    // @ts-ignore
+                    push(`/offer/${res?.result?.meta?.nftoken_id}/buy`);
                   }
                 }
               );
