@@ -92,35 +92,35 @@ export default function Buy({
     },[]);
 
     return (
-        <div className={"flex flex-col p-2 bg-gray-900 h-screen text-white"}>
+        <div className={"flex flex-col p-2 h-screen text-black"}>
             <div className={"flex flex-row w-full"}>
                 <div className={"flex flex-col "}>
-                    <div className={"border-solid border-2 border-gray-700 p-10 rounded bg-black max-h-[80vh] flex items-center mb-4"}>
+                    <div className={"border-solid border-2 border-gray-200 p-10 rounded bg-slate-200 max-h-[80vh] flex items-center mb-4"}>
                         <img src={metadata?.image} className={"object-contain h-150 w-150"} />
                     </div>
-                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"}>
-                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Description :</h5>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>{metadata?.description}</p>
+                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 bg-gray-200"}>
+                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-black"}>Description :</h5>
+                        <p className={"font-normal text-gray-700 text-black"}>{metadata?.description}</p>
                     </div>
                 </div>
                 <div className={"flex flex-col p-2"}>
-                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 mb-5"}>
-                        <h1 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Title :</h1>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>{metadata?.title}</p>
+                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 bg-gray-200 mb-5"}>
+                        <h1 className={"mb-2 text-2xl font-bold tracking-tight text-black"}>Title :</h1>
+                        <p className={"font-normal text-gray-700 text-black"}>{metadata?.title}</p>
                     </div>
-                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 mb-5"}>
-                        <h1 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Token ID:</h1>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>{nftTokenInfo?.data.result.nft_id}</p>
+                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 bg-gray-200 mb-5"}>
+                        <h1 className={"mb-2 text-2xl font-bold tracking-tight text-black"}>Token ID:</h1>
+                        <p className={"font-normal text-gray-700 text-black"}>{nftTokenInfo?.data.result.nft_id}</p>
                     </div>
-                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 mb-5"}>
-                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Users infos :</h5>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>Issuer: {nftTokenInfo?.data.result.issuer}</p>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>Owner: {nftTokenInfo?.data.result.owner}</p>
+                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 bg-gray-200 mb-5"}>
+                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-black"}>Users infos :</h5>
+                        <p className={"font-normal text-gray-700 text-black"}>Issuer: {nftTokenInfo?.data.result.issuer}</p>
+                        <p className={"font-normal text-gray-700 text-black"}>Owner: {nftTokenInfo?.data.result.owner}</p>
                     </div>
-                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 mb-5"}>
-                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Price :</h5>
-                        <p className={"font-normal text-gray-700 dark:text-gray-400"}>curent price</p>
-                        <h6 className={"mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"}>{parseInt(nftOfferInfo?.amount)/1000000} XRP  ${xrpInDollar}</h6>
+                    <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 bg-gray-200 mb-5"}>
+                        <h5 className={"mb-2 text-2xl font-bold tracking-tight text-black"}>Price :</h5>
+                        <p className={"font-normal text-gray-700 text-black"}>curent price</p>
+                        <h6 className={"mb-2 text-1xl font-bold tracking-tight text-black"}>{parseInt(nftOfferInfo?.amount)/1000000} XRP  ${xrpInDollar}</h6>
                         <button onClick={buyNft} className={"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>Buy the NFT</button>
                     </div>
                 </div>
