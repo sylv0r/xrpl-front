@@ -1,7 +1,7 @@
 'use client'
 import xrplClient from "@/auth/Xrp";
 import xumm from "@/auth/Xumm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import { convertHexToString } from "xrpl";
 
@@ -31,7 +31,7 @@ export default function Buy({
                 .then((res) => {
                     console.log(res);
                     setNftOfferInfo(res.result.offers[0]);
-                    xrpValue(res.result.offers[0].amount.toString());
+                    xrpValue((parseInt(res.result.offers[0].amount.toString())/1000000).toString());
                     xrplClient.disconnect();
                 });
         });
@@ -87,9 +87,12 @@ export default function Buy({
         });
     }
 
+    useEffect(() => {
+        getNfTokenInfo();
+    },[]);
+
     return (
         <div className={"flex flex-col p-2 bg-gray-900 h-screen text-white"}>
-            <button onClick={getNfTokenInfo} className={"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>Get NFT infos</button>
             <div className={"flex flex-row w-full"}>
                 <div className={"flex flex-col "}>
                     <div className={"border-solid border-2 border-gray-700 p-10 rounded bg-black max-h-[80vh] flex items-center mb-4"}>
@@ -117,7 +120,7 @@ export default function Buy({
                     <div className={"block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 mb-5"}>
                         <h5 className={"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"}>Price :</h5>
                         <p className={"font-normal text-gray-700 dark:text-gray-400"}>curent price</p>
-                        <h6 className={"mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"}>{nftOfferInfo?.amount} XRP  ${xrpInDollar}</h6>
+                        <h6 className={"mb-2 text-1xl font-bold tracking-tight text-gray-900 dark:text-white"}>{parseInt(nftOfferInfo?.amount)/1000000} XRP  ${xrpInDollar}</h6>
                         <button onClick={buyNft} className={"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"}>Buy the NFT</button>
                     </div>
                 </div>
