@@ -48,20 +48,18 @@ export default function Home() {
         ""
       )}
       {account !== "" ? (
-        <>
           <div className="flex flex-col items-center justify-between">
             <Link href={"/offer/create"}>Create an offer</Link>
             &nbsp;- or -&nbsp;
             <button onClick={logout}>Sign Out</button>
           </div>
-          <InstantSearch indexName="beyond_beyond" searchClient={searchClient}>
-            <SearchBox />
-            <Hits hitComponent={Hit} />
-          </InstantSearch>
-        </>
       ) : (
         ""
       )}
+        <InstantSearch indexName="beyond_beyond" searchClient={searchClient}>
+            <SearchBox />
+            <Hits hitComponent={Hit} />
+        </InstantSearch>
     </main>
   );
 }
