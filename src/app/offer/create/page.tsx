@@ -2,7 +2,7 @@
 import xrplClient from "@/auth/Xrp";
 import xumm from "@/auth/Xumm";
 import { pinFileToIPFS } from "@/helpers/sendFileToPinata";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Path, useForm, UseFormRegister, SubmitHandler } from "react-hook-form";
 import { convertStringToHex } from "xrpl";
 import { useRouter } from "next/navigation";
@@ -34,12 +34,18 @@ const Input = ({ label, register, required, type, name }: InputProps) => (
 );
 
 export default function CreateOffer() {
-  const { push } = useRouter();
+  const { push, replace } = useRouter();
   const { register, handleSubmit } = useForm<IFormValues>();
   const [account, setAccount] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
   xumm.user.account.then((a) => setAccount(a ?? ""));
+
+  useEffect(() => {
+    if (!account) {
+      replace("/");
+    }
+  }, [account, replace]);
 
   const onSubmit: SubmitHandler<IFormValues> = async (data) => {
     const returned = await pinFileToIPFS(
