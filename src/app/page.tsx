@@ -8,8 +8,8 @@ import xumm from "@/auth/Xumm";
 import Image from "next/image";
 
 const searchClient = algoliasearch(
-  "YR1HTDHWAY",
-  "677584de4b445a1e0690d2b1c8ca8505",
+  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? "",
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_SECRET ?? "",
 );
 
 function Hit({ hit }: { hit: any }) {
@@ -48,20 +48,18 @@ export default function Home() {
         ""
       )}
       {account !== "" ? (
-        <>
           <div className="flex flex-col items-center justify-between">
             <Link href={"/offer/create"}>Create an offer</Link>
             &nbsp;- or -&nbsp;
             <button onClick={logout}>Sign Out</button>
           </div>
-          <InstantSearch indexName="beyond_beyond" searchClient={searchClient}>
-            <SearchBox />
-            <Hits hitComponent={Hit} />
-          </InstantSearch>
-        </>
       ) : (
         ""
       )}
+        <InstantSearch indexName="beyond_beyond" searchClient={searchClient}>
+            <SearchBox />
+            <Hits hitComponent={Hit} />
+        </InstantSearch>
     </main>
   );
 }
